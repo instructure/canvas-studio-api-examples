@@ -19,4 +19,10 @@ fi
 script_path="${1}"
 shift
 
+if [ ! -f "${script_path}" ]; then
+  echo "Error: ${script_path} is not a file. Please specify a Python script to run."
+  echo "Usage: bin/run <script_path>"
+  exit 1
+fi
+
 PYTHONPATH="${__dir}" exec python "${script_path}" "$@"

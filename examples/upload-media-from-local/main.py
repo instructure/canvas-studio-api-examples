@@ -1,17 +1,15 @@
-import argparse
 import os
 
-from utils.utils import PublicAPIClient, request_with_retry
+from utils.utils import PublicAPIClient, request_with_retry, get_standard_arguments
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("files", nargs="+", help="path to the media file(s)")
-    parser.add_argument(
-        "--subdomain", type=str, required=True, help="subdomain of the Studio account"
+    args = get_standard_arguments(
+        [
+            (["files"], {"nargs": "+", "help": "path to the media file(s)"}),
+            (["--user-id"], {"type": int, "help": "upload on behalf of a user"}),
+        ]
     )
-    parser.add_argument("--user-id", type=int, help="upload on behalf of a user")
-    args = parser.parse_args()
 
     public_api_client = PublicAPIClient(args.subdomain)
     for media_file in args.files:

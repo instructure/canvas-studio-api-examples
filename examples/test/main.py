@@ -1,12 +1,8 @@
-import argparse
-
-from utils.utils import PublicAPIClient
+from utils.utils import PublicAPIClient, get_standard_arguments
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--subdomain", type=str, required=True)
-    args = parser.parse_args()
+    args = get_standard_arguments()
 
     public_api_client = PublicAPIClient(args.subdomain)
     public_api_client.refresh_tokens()
