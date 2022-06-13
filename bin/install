@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+if [ ! -d "${__dir}/venv" ]; then
+  python3 -m venv "${__dir}/venv"
+fi
+
+# shellcheck source=/dev/null
+source "${__dir}/venv/bin/activate"
+
+if [ ! -f "${__dir}/config.json" ]; then
+  cat <<EOT >> "${__dir}/config.json"
+{
+    "access_token": "",
+    "client_id": "",
+    "client_secret": "",
+    "refresh_token": ""
+}
+EOT
+fi
+
+pip install -q --upgrade pip
+exec pip install -q -r "${__dir}/requirements.txt"

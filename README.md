@@ -4,22 +4,34 @@ In this repository, we collect example scripts that can be useful for the team a
 
 ## Prerequisites
 
-TBD
+To run python scripts inside `examples` directory you should first run the installer script:
 
-## Language
-
-The scripts in this repository are prefered to be written in Python as it's widely adopted and easy to read.
-
-## Layout of the repository
-
-Each script needs to have its own subdirectory under the `examples` directory and needs to have a `README.md` explaining its purpose and how to use it.
-
-i.e. if there's a script to download the captions of a media, the layout should look like:
-
-```
-examples/
-    download-media-captions/
-        script.py
-        README.md
+```bash
+bin/install
 ```
 
+This will handle installing the required packages into virtualenv and create template for the configuration file.
+
+### Authorization
+
+In order to authorize the requests, please add your credentials in `JSON` format into the `config.json` file created by install script.
+
+You can generate the necessary credentials as described [here](https://community.canvaslms.com/t5/The-Product-Blog/Connecting-Studio-OAuth-via-Postman/ba-p/259739)
+
+Once you have them in config.json, you won't have to deal with them anymore: the example scripts automatically handle renewing expired tokens.
+
+### Testing
+
+In order to confirm your credentials, please run:
+
+```bash
+bin/run examples/test/main.py --subdomain <school_subdomain>
+```
+
+## Usage
+
+After the installation, you can run the scripts using `bin/run` script:
+
+```bash
+bin/run <path_to_script_file> <arguments>
+```
