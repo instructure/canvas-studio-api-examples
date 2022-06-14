@@ -11,18 +11,12 @@ fi
 # shellcheck source=/dev/null
 source "${__dir}/venv/bin/activate"
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: bin/run <script_path>"
-  exit 1
-fi
-
-script_path="${1}"
-shift
-
+script_path="${1:-}"
 if [ ! -f "${script_path}" ]; then
-  echo "Error: ${script_path} is not a file. Please specify a Python script to run."
+  echo "Error: please specify a Python script to run."
   echo "Usage: bin/run <script_path>"
   exit 1
 fi
+shift
 
 PYTHONPATH="${__dir}" exec python "${script_path}" "$@"
