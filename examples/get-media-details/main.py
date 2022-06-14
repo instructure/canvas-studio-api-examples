@@ -1,10 +1,10 @@
 import json
 
-from utils.utils import PublicAPIClient, get_standard_arguments
+from utils.utils import PublicAPIClient, get_commandline_arguments
 
 
 def main():
-    args = get_standard_arguments(
+    args = get_commandline_arguments(
         [
             (["media_id"], {"type": int, "help": "the media to get details about"}),
         ]

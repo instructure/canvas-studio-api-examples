@@ -1,10 +1,10 @@
 import os
 
-from utils.utils import PublicAPIClient, request_with_retry, get_standard_arguments
+from utils.utils import PublicAPIClient, request_with_retry, get_commandline_arguments
 
 
 def main():
-    args = get_standard_arguments(
+    args = get_commandline_arguments(
         [
             (["files"], {"nargs": "+", "help": "path to the media file(s)"}),
             (["--user-id"], {"type": int, "help": "upload on behalf of a user"}),

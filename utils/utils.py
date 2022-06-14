@@ -87,7 +87,7 @@ def request_with_retry(method, url, headers=None, params=None, data=None, retry=
     return response
 
 
-def get_standard_arguments(additional_arguments=None):
+def get_commandline_arguments(additional_arguments=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--subdomain", type=str, required=True, help="subdomain of the Studio account"

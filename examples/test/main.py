@@ -1,8 +1,8 @@
-from utils.utils import PublicAPIClient, get_standard_arguments
+from utils.utils import PublicAPIClient, get_commandline_arguments
 
 
 def main():
-    args = get_standard_arguments()
+    args = get_commandline_arguments()
 
     public_api_client = PublicAPIClient(args.subdomain)
     public_api_client.refresh_tokens()
