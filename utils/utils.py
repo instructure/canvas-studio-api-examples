@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import requests
@@ -84,3 +85,14 @@ def request_with_retry(method, url, headers=None, params=None, data=None, retry=
                 retry=retry - 1,
             )
     return response
+
+
+def get_commandline_arguments(additional_arguments=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--subdomain", type=str, required=True, help="subdomain of the Studio account"
+    )
+    if additional_arguments:
+        for args, kwargs in additional_arguments:
+            parser.add_argument(*args, **kwargs)
+    return parser.parse_args()
