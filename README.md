@@ -1,6 +1,6 @@
 # Canvas Studio API examples
 
-In this repository, we collect example scripts that can be useful for the team and Studio account administrators to access the public API of Canvas Studio.
+In this repository, we collect example scripts that can be useful for the team and Studio account administrators to access the public API of Canvas Studio (documentation can be found at https://tw.instructuremedia.com/api/public/docs/
 
 ## Prerequisites
 
