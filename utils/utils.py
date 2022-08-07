@@ -3,6 +3,8 @@ import json
 import os
 import requests
 import time
+import logging
+from http.client import HTTPConnection
 
 
 DEFAULT_CONFIG_FILE = "config.json"
@@ -105,6 +107,7 @@ def add_default_arguments(parser):
         help="name of the config file",
     )
 
+
 def get_commandline_arguments(additional_arguments=None):
     parser = argparse.ArgumentParser()
     add_default_arguments(parser)
@@ -112,3 +115,16 @@ def get_commandline_arguments(additional_arguments=None):
         for args, kwargs in additional_arguments:
             parser.add_argument(*args, **kwargs)
     return parser.parse_args()
+
+
+def enable_debug_logs():
+    log = logging.getLogger("urllib3")
+    log.setLevel(logging.DEBUG)
+
+    # logging from urllib3 to console
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    log.addHandler(ch)
+
+    # print statements from `http.client.HTTPConnection` to console/stdout
+    HTTPConnection.debuglevel = 0

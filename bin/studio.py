@@ -12,12 +12,18 @@ import uuid
 # customizes argparse, see
 # https://github.com/aws/aws-cli/blob/45b0063b2d0b245b17a57fd9eebd9fcc87c4426a/awscli/argparser.py
 
-from utils.utils import PublicAPIClient, add_default_arguments
+from utils.utils import PublicAPIClient, add_default_arguments, enable_debug_logs
 
 
 def main():
     parser = argparse.ArgumentParser(add_help=False)
     add_default_arguments(parser)
+    parser.add_argument(
+        "--debug",
+        default=False,
+        action="store_true",
+        help="enable debug logs for the requests library",
+    ),
     parser.add_argument(
         "--table_format",
         type=str,
@@ -27,6 +33,9 @@ def main():
     )
 
     args, unprocessed_args = parser.parse_known_args()
+
+    if args.debug:
+        enable_debug_logs()
 
     # We need it for the commands
     subparsers = parser.add_subparsers(help="sub-command help")
