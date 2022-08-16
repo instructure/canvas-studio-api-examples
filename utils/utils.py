@@ -17,11 +17,12 @@ class PublicAPIClient:
         self._load_config()
         self.subdomain = self.config["subdomain"]
         self.domain = self.config.get("domain", "instructuremedia.com")
+        self.scheme = self.config.get("scheme", "https")
 
     def request(self, method, url, params=None, data=None):
         response = request_with_retry(
             method,
-            f"https://{self.subdomain}.{self.domain}/api/public/v1/{url}",
+            f"{self.scheme}://{self.subdomain}.{self.domain}/api/public/v1/{url}",
             headers={
                 "Authorization": f"Bearer {self.config['access_token']}",
             },
@@ -36,7 +37,7 @@ class PublicAPIClient:
     def refresh_tokens(self):
         response = request_with_retry(
             "post",
-            f"https://{self.subdomain}.{self.domain}/api/public/oauth/token",
+            f"{self.scheme}://{self.subdomain}.{self.domain}/api/public/oauth/token",
             data={
                 "client_id": self.config["client_id"],
                 "client_secret": self.config["client_secret"],
@@ -67,7 +68,7 @@ class PublicAPIClient:
             "client_id",
             "client_secret",
             "refresh_token",
-            "subdomain"
+            "subdomain",
         ]:
             if required_key not in self.config:
                 raise Exception(
