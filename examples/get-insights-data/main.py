@@ -8,31 +8,33 @@ def main():
     args = get_commandline_arguments(
         [
             (
-                ["id"],
-                {"type": int, "help": "id of the course to get insights for"},
+                ["course_id"], {"type": int, "help": "id of the course to get insights for"},
             )
         ]
     )
     public_api_client = PublicAPIClient(args.subdomain)
-    perspectives = fetch_course_perspectives(public_api_client, args.id)
-    course_data = fetch_course_data(public_api_client, args.id)
+    perspectives = fetch_course_perspectives(public_api_client, args.course_id)
+    course_data = fetch_course_data(public_api_client, args.course_id)
+
     construct_summary(public_api_client, perspectives, course_data)
     construct_student_insights(public_api_client, perspectives, course_data)
 
 
 def fetch_course_perspectives(public_api_client, course_id):
-    return public_api_client.request("get", f"/courses/{course_id}/perspectives")
+    response = public_api_client.request("get", f"/courses/{course_id}/perspectives")
+    return response.json()["perspectives"]
 
 
 def fetch_course_data(public_api_client, course_id):
-    return public_api_client.request("get", f"/courses/{course_id}")
+    response = public_api_client.request("get", f"/courses/{course_id}")
+    return response.json()["course"]
 
 
 def construct_summary(public_api_client, perspectives, course):
     headers = [
         "Course ID",
         "Course Title",
-        "Perspective-UUID",
+        "Perspective UUID",
         "Perspective Title",
         "Views",
         "Time Viewed [min]",
@@ -42,12 +44,12 @@ def construct_summary(public_api_client, perspectives, course):
     for perspective in perspectives:
         perspective_data = [
             course["id"],
-            course["title"],
+            course["name"],
             perspective["uuid"],
             perspective["title"],
         ]
         summary_csv = public_api_client.request(
-            "get", f"/perspectives/{perspective.uuid}/insights/overview"
+            "get", f"/perspectives/{perspective['uuid']}/insights/overview"
         )
 
         all_data = list(csv.reader(summary_csv.iter_lines(decode_unicode=True)))
@@ -76,7 +78,7 @@ def construct_student_insights(public_api_client, perspectives, course):
     headers = [
         "Course ID",
         "Course Title",
-        "Perspective-UUID",
+        "Perspective UUID",
         "Perspective Title",
         "Name",
         "Email",
@@ -87,16 +89,15 @@ def construct_student_insights(public_api_client, perspectives, course):
     for perspective in perspectives:
         perspective_data = [
             course["id"],
-            course["title"],
+            course["name"],
             perspective["uuid"],
             perspective["title"],
         ]
         student_csv = public_api_client.request(
-            "get", f"/perspectives/{perspective.uuid}/insights/overview"
+            "get", f"/perspectives/{perspective['uuid']}/insights/users"
         )
         parsed_csv = csv.DictReader(student_csv.iter_lines(decode_unicode=True))
         for row in parsed_csv:
-            print(row)
             perspective_data.append(row["Name"])
             perspective_data.append(row["Email"])
             perspective_data.append(row["Role"])
