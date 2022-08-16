@@ -170,11 +170,49 @@ class Command:
 
         raise Exception(error_message)
 
+    def _is_singular(self):
+        if self.method == "post":
+            # /media/permissions or /collections/permissions
+            if self.path.endswith("permissions"):
+                return False
+
+            return True
+
+        if self.method != "get":
+            return False
+
+        # "/media/{media_id}/download": {
+        if "200" not in self.data["responses"]:
+            return False
+
+        return_ok = self.data["responses"]["200"]
+
+        # /perspectives/{perspective_id}/insights/overview
+        if "schema" not in return_ok:
+            return False
+
+        #     "/media/search": {
+        schema = return_ok["schema"]
+        props = schema.get("properties", None) or schema["allOf"][0].get(
+            "properties", None
+        )
+
+        # "/collections/{collection_id}": {
+        return_types = [value.get("type", "") for _, value in props.items()]
+
+        return any([return_type != "array" for return_type in return_types])
+
     def _create_command_name(self, method, path_entities):
         if path_entities[-1] in ["search", "download", "complete", "ping"]:
             return "_".join([path_entities[-1]] + path_entities[:-1])
         else:
-            return f"{Command._method_to_command[method]}_{'_'.join(path_entities)}"
+            command_name = (
+                f"{Command._method_to_command[method]}_{'_'.join(path_entities)}"
+            )
+            if command_name[-1] == "s" and self._is_singular():
+                return command_name[:-1]
+            else:
+                return command_name
 
     def parameter_names(self):
         return [parameter["name"] for parameter in self.parameters()]
