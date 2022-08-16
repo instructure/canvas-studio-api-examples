@@ -11,7 +11,7 @@ def main():
         ]
     )
 
-    public_api_client = PublicAPIClient(args.subdomain)
+    public_api_client = PublicAPIClient(args.config)
     for media_file in args.files:
         media_filename = os.path.basename(media_file)
         print(f"Uploading {media_filename}")

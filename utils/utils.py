@@ -5,18 +5,23 @@ import requests
 import time
 
 
+DEFAULT_CONFIG_FILE = "config.json"
+
+
 class PublicAPIClient:
-    def __init__(self, subdomain):
-        self.subdomain = subdomain
+    def __init__(self, config_file=DEFAULT_CONFIG_FILE):
+        self.config_file = config_file
         self.config_path = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "..", "config.json")
+            os.path.join(os.path.dirname(__file__), "..", self.config_file)
         )
         self._load_config()
+        self.subdomain = self.config["subdomain"]
+        self.domain = self.config.get("domain", "instructuremedia.com")
 
     def request(self, method, url, params=None, data=None):
         response = request_with_retry(
             method,
-            f"https://{self.subdomain}.instructuremedia.com/api/public/v1/{url}",
+            f"https://{self.subdomain}.{self.domain}/api/public/v1/{url}",
             headers={
                 "Authorization": f"Bearer {self.config['access_token']}",
             },
@@ -31,7 +36,7 @@ class PublicAPIClient:
     def refresh_tokens(self):
         response = request_with_retry(
             "post",
-            f"https://{self.subdomain}.instructuremedia.com/api/public/oauth/token",
+            f"https://{self.subdomain}.{self.domain}/api/public/oauth/token",
             data={
                 "client_id": self.config["client_id"],
                 "client_secret": self.config["client_secret"],
@@ -54,16 +59,19 @@ class PublicAPIClient:
             try:
                 self.config = json.load(f)
             except json.decoder.JSONDecodeError:
-                raise Exception("config.json is invalid, please format it as JSON")
+                raise Exception(
+                    f"{self.config_file} is invalid, please format it as JSON"
+                )
         for required_key in [
             "access_token",
             "client_id",
             "client_secret",
             "refresh_token",
+            "subdomain"
         ]:
             if required_key not in self.config:
                 raise Exception(
-                    f"Required configuration parameter '{required_key}' missing from config.json"
+                    f"Required configuration parameter '{required_key}' missing from {self.config_file}"
                 )
 
     def _save_config(self):
@@ -90,7 +98,11 @@ def request_with_retry(method, url, headers=None, params=None, data=None, retry=
 def get_commandline_arguments(additional_arguments=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--subdomain", type=str, required=True, help="subdomain of the Studio account"
+        "--config",
+        type=str,
+        required=False,
+        default=DEFAULT_CONFIG_FILE,
+        help="name of the config file",
     )
     if additional_arguments:
         for args, kwargs in additional_arguments:
