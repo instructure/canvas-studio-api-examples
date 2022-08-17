@@ -17,7 +17,7 @@ def main():
     course_data = fetch_course_data(public_api_client, args.course_id)
 
     construct_summary(public_api_client, perspectives, course_data)
-    construct_student_insights(public_api_client, perspectives, course_data)
+    construct_user_insights(public_api_client, perspectives, course_data)
 
 
 def fetch_course_perspectives(public_api_client, course_id):
@@ -69,7 +69,7 @@ def construct_summary(public_api_client, perspectives, course):
     )
 
 
-def construct_student_insights(public_api_client, perspectives, course):
+def construct_user_insights(public_api_client, perspectives, course):
     headers = [
         "Course ID",
         "Course Title",
@@ -88,7 +88,7 @@ def construct_student_insights(public_api_client, perspectives, course):
             perspective["uuid"],
             perspective["title"],
         ]
-        print(f"Collecting students insights for perspective {perspective['uuid']}")
+        print(f"Collecting users insights for perspective {perspective['uuid']}")
         users_csv = get_csv(
             public_api_client,
             f"perspectives/{perspective['uuid']}/insights/users",
@@ -106,7 +106,7 @@ def construct_student_insights(public_api_client, perspectives, course):
             )
 
     write_csv_file(
-        f"students-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+        f"users-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
     )
 
 
