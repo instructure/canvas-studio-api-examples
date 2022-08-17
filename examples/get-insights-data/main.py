@@ -1,5 +1,4 @@
 import os
-import sys
 import csv
 from utils.utils import PublicAPIClient, get_commandline_arguments
 
@@ -112,6 +111,7 @@ def get_csv(public_api_client, url, parsed=False):
 
 def write_csv_file(name, headers, data):
     with open(name, "w") as csv_file:
+        print (f"Writing data to {os.path.realpath(csv_file.name)}")
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(headers)
         csv_writer.writerows(data)
