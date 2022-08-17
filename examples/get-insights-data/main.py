@@ -65,7 +65,7 @@ def construct_summary(public_api_client, perspectives, course):
         )
 
     write_csv_file(
-        f"summary-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+        f"summary-{public_api_client.subdomain}-{course['course_id']}.csv", headers, csv_data
     )
 
 
@@ -83,7 +83,7 @@ def construct_user_insights(public_api_client, perspectives, course):
     csv_data = []
     for perspective in perspectives:
         perspective_data = [
-            course["id"],
+            course["course_id"],
             course["name"],
             perspective["uuid"],
             perspective["title"],
@@ -106,7 +106,7 @@ def construct_user_insights(public_api_client, perspectives, course):
             )
 
     write_csv_file(
-        f"users-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+        f"users-{public_api_client.subdomain}-{course['course_id']}.csv", headers, csv_data
     )
 
 
