@@ -43,22 +43,26 @@ def construct_summary(public_api_client, perspectives, course):
     csv_data = []
     for perspective in perspectives:
         perspective_data = [
-            course["id"],
+            course["course_id"],
             course["name"],
             perspective["uuid"],
             perspective["title"],
         ]
-        summary_csv = get_csv(
-            public_api_client, f"perspectives/{perspective['uuid']}/insights/overview"
+        print(f"Collecting insights summary for perspective {perspective['uuid']}")
+        summary_csv = list(
+            get_csv(
+                public_api_client,
+                f"perspectives/{perspective['uuid']}/insights/overview",
+            )
         )
-        for row in summary_csv:
-            if "Views" in row:
-                perspective_data.append(row[1])
-            elif "Time Viewed [min]" in row:
-                perspective_data.append(row[1])
-            elif "Unique Viewers" in row and len(row) == 2:
-                perspective_data.append(row[1])
-        csv_data.append(perspective_data)
+        csv_data.append(
+            perspective_data
+            + [
+                get_value_from_row(summary_csv[1], "Views", 0),
+                get_value_from_row(summary_csv[2], "Time Viewed [min]", 0),
+                get_value_from_row(summary_csv[3], "Unique Viewers", 0),
+            ]
+        )
 
     write_csv_file(
         f"summary-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
@@ -84,21 +88,35 @@ def construct_student_insights(public_api_client, perspectives, course):
             perspective["uuid"],
             perspective["title"],
         ]
+        print(f"Collecting students insights for perspective {perspective['uuid']}")
         users_csv = get_csv(
             public_api_client,
             f"perspectives/{perspective['uuid']}/insights/users",
             parsed=True,
         )
         for row in users_csv:
-            perspective_data.append(row["Name"])
-            perspective_data.append(row["Email"])
-            perspective_data.append(row["Role"])
-            perspective_data.append(row["Completion rate [%]"])
-        csv_data.append(perspective_data)
+            csv_data.append(
+                perspective_data
+                + [
+                    row["Name"],
+                    row["Email"],
+                    row["Role"],
+                    row["Completion rate [%]"],
+                ]
+            )
 
     write_csv_file(
-        f"student-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+        f"students-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
     )
+
+
+def get_value_from_row(row, name, default_value):
+    if row[0] != name:
+        raise Exception("Insights API has changed. Please file a support week ticket.")
+    try:
+        return row[1]
+    except IndexError:
+        return default_value
 
 
 def get_csv(public_api_client, url, parsed=False):
@@ -111,7 +129,7 @@ def get_csv(public_api_client, url, parsed=False):
 
 def write_csv_file(name, headers, data):
     with open(name, "w") as csv_file:
-        print (f"Writing data to {os.path.realpath(csv_file.name)}")
+        print(f"Writing data to {os.path.realpath(csv_file.name)}")
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(headers)
         csv_writer.writerows(data)
