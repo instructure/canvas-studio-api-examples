@@ -8,7 +8,8 @@ def main():
     args = get_commandline_arguments(
         [
             (
-                ["course_id"], {"type": int, "help": "id of the course to get insights for"},
+                ["course_id"],
+                {"type": int, "help": "id of the course to get insights for"},
             )
         ]
     )
@@ -21,12 +22,12 @@ def main():
 
 
 def fetch_course_perspectives(public_api_client, course_id):
-    response = public_api_client.request("get", f"/courses/{course_id}/perspectives")
+    response = public_api_client.request("get", f"courses/{course_id}/perspectives")
     return response.json()["perspectives"]
 
 
 def fetch_course_data(public_api_client, course_id):
-    response = public_api_client.request("get", f"/courses/{course_id}")
+    response = public_api_client.request("get", f"courses/{course_id}")
     return response.json()["course"]
 
 
@@ -48,30 +49,21 @@ def construct_summary(public_api_client, perspectives, course):
             perspective["uuid"],
             perspective["title"],
         ]
-        summary_csv = public_api_client.request(
-            "get", f"/perspectives/{perspective['uuid']}/insights/overview"
+        summary_csv = get_csv(
+            public_api_client, f"perspectives/{perspective['uuid']}/insights/overview"
         )
-
-        all_data = list(csv.reader(summary_csv.iter_lines(decode_unicode=True)))
-        for i in all_data:
-            if "Views" in i:
-                perspective_data.append(i[1])
-            elif "Time Viewed [min]" in i:
-                perspective_data.append(i[1])
-            elif "Unique Viewers" in i and len(i) == 2:
-                perspective_data.append(i[1])
+        for row in summary_csv:
+            if "Views" in row:
+                perspective_data.append(row[1])
+            elif "Time Viewed [min]" in row:
+                perspective_data.append(row[1])
+            elif "Unique Viewers" in row and len(row) == 2:
+                perspective_data.append(row[1])
         csv_data.append(perspective_data)
 
-    with open(
-        os.path.join(
-            sys.path[0],
-            f"summary-{public_api_client.subdomain}-{course['id']}.csv",
-        ),
-        "w",
-    ) as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(headers)
-        csv_writer.writerows(csv_data)
+    write_csv_file(
+        f"summary-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+    )
 
 
 def construct_student_insights(public_api_client, perspectives, course):
@@ -93,26 +85,36 @@ def construct_student_insights(public_api_client, perspectives, course):
             perspective["uuid"],
             perspective["title"],
         ]
-        student_csv = public_api_client.request(
-            "get", f"/perspectives/{perspective['uuid']}/insights/users"
+        users_csv = get_csv(
+            public_api_client,
+            f"perspectives/{perspective['uuid']}/insights/users",
+            parsed=True,
         )
-        parsed_csv = csv.DictReader(student_csv.iter_lines(decode_unicode=True))
-        for row in parsed_csv:
+        for row in users_csv:
             perspective_data.append(row["Name"])
             perspective_data.append(row["Email"])
             perspective_data.append(row["Role"])
             perspective_data.append(row["Completion rate [%]"])
         csv_data.append(perspective_data)
 
-    with open(
-        os.path.join(
-            sys.path[0], f"student-{public_api_client.subdomain}-{course['id']}.csv"
-        ),
-        "w",
-    ) as csv_file:
+    write_csv_file(
+        f"student-{public_api_client.subdomain}-{course['id']}.csv", headers, csv_data
+    )
+
+
+def get_csv(public_api_client, url, parsed=False):
+    response = public_api_client.request("get", url)
+    content = response.content.decode("utf-8").splitlines()
+    if parsed:
+        return csv.DictReader(content)
+    return csv.reader(content)
+
+
+def write_csv_file(name, headers, data):
+    with open(name, "w") as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(headers)
-        csv_writer.writerows(csv_data)
+        csv_writer.writerows(data)
 
 
 if __name__ == "__main__":

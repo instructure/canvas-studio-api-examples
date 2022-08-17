@@ -3,7 +3,7 @@
 This script collects and saves the following information about videos into two csv files:
 - Summary file:
   - Course ID - id of the course in Canvas LMS
-  - Course Title - Name of the course in Cavas LMS
+  - Course Title - Name of the course in Canvas LMS
   - Perspective UUID - Unique id string of the video
   - Perspective Title - Title of the video
   - Views - The number of views of the video
@@ -12,7 +12,7 @@ This script collects and saves the following information about videos into two c
 
 - Users file:
   - Course ID - id of the course in Canvas LMS
-  - Course Title - Name of the course in Cavas LMS
+  - Course Title - Name of the course in Canvas LMS
   - Perspective UUID - Unique id string of the video
   - Perspective Title - Title of the video
   - Name - Name of the user
