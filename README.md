@@ -42,6 +42,19 @@ bin/run <path_to_script_file> <arguments>
 
 If you want to use these scripts for multiple schools, you can have multiple config files. All of them should start with `config` and end with `.json`, e.g. `config-otherschool.json`. When you run a script that should use this other config, don't forget to specify it:
 
-```
+```bash
 bin/run examples/test/main.py --config config-otherschool.json
+```
+
+## Advanced topic: overriding domain and scheme
+
+If you want to use these scripts in other (development) environments, you can also change the domain and the url scheme in the config file. For local development, it would look like this:
+
+```json
+{
+    "subdomain": "tw",
+    "domain": "arc.docker",
+    "scheme": "http",
+    ...
+}
 ```
