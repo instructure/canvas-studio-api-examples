@@ -25,5 +25,5 @@ This script collects and saves the following information about videos into two c
 Before using this script, don't forget to configure your OAuth credentials (see [here](../../README.md#authorization)).
 
 ```bash
-bin/run examples/get-insights-data/main.py --subdomain <school_subdomain> <course_id>
+bin/run examples/get-insights-data/main.py <course_id>
 ```

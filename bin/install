@@ -16,7 +16,8 @@ if [ ! -f "${__dir}/config.json" ]; then
     "access_token": "",
     "client_id": "",
     "client_secret": "",
-    "refresh_token": ""
+    "refresh_token": "",
+    "subdomain": ""
 }
 EOT
 fi

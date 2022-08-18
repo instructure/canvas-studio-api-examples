@@ -10,7 +10,7 @@ def main():
         ]
     )
 
-    media_detailer = MediaDetailer(args.subdomain, args.media_id)
+    media_detailer = MediaDetailer(args.config, args.media_id)
     media = media_detailer.get()
 
     captions = media_detailer.get("caption_files")
@@ -50,8 +50,8 @@ def main():
 
 
 class MediaDetailer:
-    def __init__(self, subdomain, media_id):
-        self.public_api_client = PublicAPIClient(subdomain)
+    def __init__(self, config, media_id):
+        self.public_api_client = PublicAPIClient(config)
         self.media_id = media_id
 
     def get(self, detail_url=None, detail_attribute=None):

@@ -5,5 +5,5 @@ This script tests renewing and using OAuth tokens. It can be used for confirming
 ## How to use
 
 ```bash
-bin/run examples/test/main.py --subdomain <school_subdomain>
+bin/run examples/test/main.py
 ```

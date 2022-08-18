@@ -4,7 +4,7 @@ from utils.utils import PublicAPIClient, get_commandline_arguments
 def main():
     args = get_commandline_arguments()
 
-    public_api_client = PublicAPIClient(args.subdomain)
+    public_api_client = PublicAPIClient(args.config)
     public_api_client.refresh_tokens()
     response = public_api_client.request("get", "ping")
 

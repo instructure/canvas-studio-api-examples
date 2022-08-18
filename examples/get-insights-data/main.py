@@ -12,7 +12,7 @@ def main():
             )
         ]
     )
-    public_api_client = PublicAPIClient(args.subdomain)
+    public_api_client = PublicAPIClient(args.config)
     perspectives = fetch_course_perspectives(public_api_client, args.course_id)
     course_data = fetch_course_data(public_api_client, args.course_id)
 
@@ -65,7 +65,9 @@ def construct_summary(public_api_client, perspectives, course):
         )
 
     write_csv_file(
-        f"summary-{public_api_client.subdomain}-{course['course_id']}.csv", headers, csv_data
+        f"summary-{public_api_client.subdomain}-{course['course_id']}.csv",
+        headers,
+        csv_data,
     )
 
 
@@ -106,7 +108,9 @@ def construct_user_insights(public_api_client, perspectives, course):
             )
 
     write_csv_file(
-        f"users-{public_api_client.subdomain}-{course['course_id']}.csv", headers, csv_data
+        f"users-{public_api_client.subdomain}-{course['course_id']}.csv",
+        headers,
+        csv_data,
     )
 
 

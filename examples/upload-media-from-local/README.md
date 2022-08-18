@@ -9,17 +9,17 @@ Before using this script, don't forget to configure your OAuth credentials (see 
 - To upload a single file:
 
   ```bash
-  bin/run examples/upload-media-from-local/main.py --subdomain <subdomain> /Users/some_user/Desktop/media/file.mp4
+  bin/run examples/upload-media-from-local/main.py /Users/some_user/Desktop/media/file.mp4
   ```
 
 - To upload multiple files:
 
   ```bash
-  bin/run examples/upload-media-from-local/main.py --subdomain <subdomain> /Users/some_user/Desktop/media/*
+  bin/run examples/upload-media-from-local/main.py /Users/some_user/Desktop/media/*
   ```
 
 - To upload on behalf of another user:
 
   ```bash
-  bin/run examples/upload-media-from-local/main.py --subdomain <subdomain> /Users/some_user/Desktop/media/file.mp4 --user-id 3
+  bin/run examples/upload-media-from-local/main.py /Users/some_user/Desktop/media/file.mp4 --user-id 3
   ```

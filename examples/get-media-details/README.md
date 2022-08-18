@@ -14,5 +14,5 @@ This script collects and prints the following information about a media:
 Before using this script, don't forget to configure your OAuth credentials (see [here](../../README.md#authorization)).
 
 ```bash
-bin/run examples/get-media-details/main.py --subdomain <school_subdomain> <media_id>
+bin/run examples/get-media-details/main.py <media_id>
 ```
