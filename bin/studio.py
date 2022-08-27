@@ -104,8 +104,13 @@ class StudioCli:
 
         if missing_params:
             sys.stderr.write(
-                f"Skipping {command.name} for {path}, params not defined: {missing_params}\n"
+                f"Skipping {command.name} for {command.path}, params not defined: {missing_params}\n"
             )
+            return False
+
+        if any([param["in"] in ["body", "formData"] for param in command.parameters()]):
+            # commands in body parameters are not supported atm.
+            # same for file/formData parameters
             return False
 
         return True
@@ -203,7 +208,13 @@ class Command:
         return any([return_type != "array" for return_type in return_types])
 
     def _create_command_name(self, method, path_entities):
-        if path_entities[-1] in ["search", "download", "complete", "ping"]:
+        if path_entities[-1] in [
+            "search",
+            "download",
+            "complete",
+            "ping",
+            "transfer_media",
+        ]:
             return "_".join([path_entities[-1]] + path_entities[:-1])
         else:
             command_name = (
