@@ -62,7 +62,6 @@ class StudioCli:
         self.schema = self._get_schema()
         self.commands = {}
 
-    # json at
     def build_commands(self, subparsers):
         for path, methods in self.schema["paths"].items():
             for method, data in methods.items():
@@ -136,7 +135,7 @@ class Command:
         "put": "update",
     }
 
-    def __init__(self, path, method, data, public_api_client) -> None:
+    def __init__(self, path, method, data, public_api_client):
         self.path = path
         self.method = method
         self.data = data
@@ -174,6 +173,15 @@ class Command:
         )
 
         raise Exception(error_message)
+
+    def parameter_names(self):
+        return [parameter["name"] for parameter in self.parameters()]
+
+    def summary(self):
+        return self.data["summary"]
+
+    def parameters(self):
+        return self.data.get("parameters", {})
 
     def _is_singular(self):
         if self.method == "post":
@@ -225,20 +233,11 @@ class Command:
             else:
                 return command_name
 
-    def parameter_names(self):
-        return [parameter["name"] for parameter in self.parameters()]
-
     def _is_csv_command(self):
         return self.name in [
             "show_perspectives_insights_overview",
             "show_perspectives_insights_users",
         ]
-
-    def summary(self):
-        return self.data["summary"]
-
-    def parameters(self):
-        return self.data.get("parameters", {})
 
     def _process_response(self, response, args):
         # can be 'application/json; charset=utf-8' or 'video/mp4'
