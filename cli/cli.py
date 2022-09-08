@@ -6,12 +6,6 @@ import io
 import tabulate
 import uuid
 
-# This script will implement cli for Studio public API.
-# Originally wanted to mimick aws cli with
-# "studio media show" like syntax, but aws cli heavily
-# customizes argparse, see
-# https://github.com/aws/aws-cli/blob/45b0063b2d0b245b17a57fd9eebd9fcc87c4426a/awscli/argparser.py
-
 from utils.utils import PublicAPIClient, add_default_arguments, enable_debug_logs
 
 
@@ -128,13 +122,6 @@ class StudioCli:
 
 
 class Command:
-    _method_to_command = {
-        "delete": "delete",
-        "get": "show",
-        "post": "add",
-        "put": "update",
-    }
-
     def __init__(self, path, method, data, public_api_client):
         self.path = path
         self.method = method
@@ -182,6 +169,13 @@ class Command:
 
     def parameters(self):
         return self.data.get("parameters", {})
+
+    _method_to_command = {
+        "delete": "delete",
+        "get": "show",
+        "post": "add",
+        "put": "update",
+    }
 
     def _is_singular(self):
         if self.method == "post":
@@ -268,7 +262,6 @@ class Command:
             for row in reader:
                 result.append(row)
 
-            # https://github.com/astanin/python-tabulate#table-format
             return tabulate.tabulate(result, headers=header, tablefmt=args.table_format)
 
         if self.method != "get" and not response.content:

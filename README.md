@@ -38,7 +38,8 @@ After the installation, you can run the scripts using `bin/run` script:
 bin/run <path_to_script_file> <arguments>
 ```
 
-## Advanced topic: multiple schools, multiple config files
+# Advanced topics
+## Multiple schools, multiple config files
 
 If you want to use these scripts for multiple schools, you can have multiple config files. All of them should start with `config` and end with `.json`, e.g. `config-otherschool.json`. When you run a script that should use this other config, don't forget to specify it:
 
@@ -46,7 +47,7 @@ If you want to use these scripts for multiple schools, you can have multiple con
 bin/run examples/test/main.py --config config-otherschool.json
 ```
 
-## Advanced topic: overriding domain and scheme
+## Overriding domain and scheme
 
 If you want to use these scripts in other (development) environments, you can also change the domain and the url scheme in the config file. For local development, it would look like this:
 
@@ -57,4 +58,40 @@ If you want to use these scripts in other (development) environments, you can al
     "scheme": "http",
     ...
 }
+```
+
+## Studio public API client
+
+With `bin/cli` you can discover what capabilities the public API has and prototype the workflows based on the API from UNIX commandline: it downloads the API schema, maps endpoints/methods to commands, for example GET `/media/{media_id}` to `show_media --media_id`.
+The script currently does not support commands with parameters in the body of the HTTP request - such as `transfer_media`.
+
+### API discovery
+
+If you run the script in itself, it will list all supported commands with a brief description.
+Note that the script supports the `--config` parameter described above.
+
+If you run the script with a command with `--help` it will return with a help about the commands parameters.
+
+```
+❯ bin/cli show_media  --help
+usage: cli.py show_media [-h] --media_id MEDIA_ID
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --media_id MEDIA_ID  The ID of the media.
+```
+
+### Running a command
+
+If you run a command with all necessary parameters then it will return with payload (can be JSON/CSV output).
+
+```
+❯ bin/cli show_media --media_id 2
+{
+  "media": {
+    "id": 2,
+    "title": "iphone_front_camera",
+    "description": null,
+    "duration": 3.042,
+    "created_at": "2020-09-18T14:27:40Z",
 ```
