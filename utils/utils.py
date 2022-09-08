@@ -3,6 +3,8 @@ import json
 import os
 import requests
 import time
+import logging
+from http.client import HTTPConnection
 
 
 DEFAULT_CONFIG_FILE = "config.json"
@@ -19,10 +21,10 @@ class PublicAPIClient:
         self.domain = self.config.get("domain", "instructuremedia.com")
         self.scheme = self.config.get("scheme", "https")
 
-    def request(self, method, url, params=None, data=None):
+    def request(self, method, url, params=None, data=None, version_prefix="v1/"):
         response = request_with_retry(
             method,
-            f"{self.scheme}://{self.subdomain}.{self.domain}/api/public/v1/{url}",
+            f"{self.scheme}://{self.subdomain}.{self.domain}/api/public/{version_prefix}{url}",
             headers={
                 "Authorization": f"Bearer {self.config['access_token']}",
             },
@@ -96,8 +98,7 @@ def request_with_retry(method, url, headers=None, params=None, data=None, retry=
     return response
 
 
-def get_commandline_arguments(additional_arguments=None):
-    parser = argparse.ArgumentParser()
+def add_default_arguments(parser):
     parser.add_argument(
         "--config",
         type=str,
@@ -105,7 +106,25 @@ def get_commandline_arguments(additional_arguments=None):
         default=DEFAULT_CONFIG_FILE,
         help="name of the config file",
     )
+
+
+def get_commandline_arguments(additional_arguments=None):
+    parser = argparse.ArgumentParser()
+    add_default_arguments(parser)
     if additional_arguments:
         for args, kwargs in additional_arguments:
             parser.add_argument(*args, **kwargs)
     return parser.parse_args()
+
+
+def enable_debug_logs():
+    log = logging.getLogger("urllib3")
+    log.setLevel(logging.DEBUG)
+
+    # logging from urllib3 to console
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    log.addHandler(ch)
+
+    # print statements from `http.client.HTTPConnection` to console/stdout
+    HTTPConnection.debuglevel = 0

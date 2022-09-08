@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+exec "${__dir}/bin/run" "${__dir}/cli/cli.py" "$@"
