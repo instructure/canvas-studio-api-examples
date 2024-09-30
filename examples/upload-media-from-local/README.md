@@ -23,3 +23,9 @@ Before using this script, don't forget to configure your OAuth credentials (see 
   ```bash
   bin/run examples/upload-media-from-local/main.py /Users/some_user/Desktop/media/file.mp4 --user-id 3
   ```
+
+- To upload on behalf of another user into a collection:
+
+  ```bash
+  bin/run examples/upload-media-from-local/main.py /Users/some_user/Desktop/media/file.mp4 --user-id 3 --collection-id 4
+  ```

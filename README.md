@@ -54,7 +54,7 @@ If you want to use these scripts in other (development) environments, you can al
 ```json
 {
     "subdomain": "tw",
-    "domain": "arc.docker",
+    "domain": "studio.localhost",
     "scheme": "http",
     ...
 }

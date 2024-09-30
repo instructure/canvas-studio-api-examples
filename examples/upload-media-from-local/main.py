@@ -7,6 +7,7 @@ def main():
     args = get_commandline_arguments(
         [
             (["files"], {"nargs": "+", "help": "path to the media file(s)"}),
+            (["--collection-id"], {"type": int, "help": "upload into a collection"}),
             (["--user-id"], {"type": int, "help": "upload on behalf of a user"}),
         ]
     )
@@ -16,17 +17,23 @@ def main():
         media_filename = os.path.basename(media_file)
         print(f"Uploading {media_filename}")
         with open(media_file, "rb") as f:
-            media_id, presigned_url = create_media(public_api_client, args.user_id)
+            media_id, presigned_url = create_media(public_api_client, args.user_id, args.collection_id)
             upload_file(presigned_url, f)
             mark_media_as_uploaded(public_api_client, media_id, media_filename)
         print(f"Uploaded {media_filename}")
 
 
-def create_media(public_api_client, user_id):
+def create_media(public_api_client, user_id, collection_id):
+    params={}
+    if collection_id:
+      params["collection_id"] = collection_id
+    if user_id:
+      params["user_id"] = user_id
+
     response = public_api_client.request(
         "post",
         "media/uploads",
-        params={"user_id": user_id} if user_id else None,
+        params,
     )
     if response.status_code != 201:
         raise Exception(f"Could not create media: {response.text}")
